@@ -7,3 +7,5 @@ Reverse Engineering of the Tesla Model 3 charger and development of an open sour
 
 To Power up the PCS : Connect 12V battery or power supply to the DC DC converter high power pins. Ground is pin nearest the edge. Then connect Wire W02 to the 12v battery ground. PCS will then wake up.
 
+
+10/07/19 : Added more can logs
