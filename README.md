@@ -9,3 +9,5 @@ To Power up the PCS : Connect 12V battery or power supply to the DC DC converter
 
 
 10/07/19 : Added more can logs
+
+15/07/19 : so it seems I was wrong. The PCS does indeed transmit something by itself over IPC CAN Tx. Log uploaded using a Salea Logic analyser. Free software available here : https://www.saleae.com/downloads/
