@@ -16,4 +16,11 @@ To Power up the PCS : Connect 12V battery or power supply to the DC DC converter
 
 V1 design for a PCS controller done and released. Do not use this. It probably won't work....
 
+20/07/19 : Excellent description of ipc can from a youtube comment :
+
+Inter Process Communication (IPC) can use the CAN protocol over a half duplex single ended bus, without the usual Transceivers (that are used to convert to a differential bus topology for noise immunity and low EMI), by simply hardware OR'ing the TX lines onto a single data line. Used over short distances with system of a common ground it allows all the usual CAN goodness (built in checksums, automatic bus arbitration and multi-drop architecture) without the additional parts count for the full CAN physical layer. As Automotive spec micro-processors now pretty much all include multiple CAN nodes in hardware, it makes sense to use that rather than alternative IPC options (classic UART, SPI, I2C etc)  
+
+
+See here: https://www.mikrocontroller.net/attachment/28831/siemens_AP2921.pdf
+
 
