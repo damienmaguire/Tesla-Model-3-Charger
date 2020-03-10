@@ -23,4 +23,5 @@ Inter Process Communication (IPC) can use the CAN protocol over a half duplex si
 
 See here: https://www.mikrocontroller.net/attachment/28831/siemens_AP2921.pdf
 
+10/03/20 : Added some charging CAN logs from  a RHD 2019 M3.
 
