@@ -25,3 +25,5 @@ See here: https://www.mikrocontroller.net/attachment/28831/siemens_AP2921.pdf
 
 10/03/20 : Added some charging CAN logs from  a RHD 2019 M3.
 
+08/03/21 : DCDC converter now up and running in the E46 touring project car. US version of the PCS. EU version also bench tested.
+
