@@ -27,3 +27,5 @@ See here: https://www.mikrocontroller.net/attachment/28831/siemens_AP2921.pdf
 
 08/03/21 : DCDC converter now up and running in the E46 touring project car. US version of the PCS. EU version also bench tested.
 
+25/03/21 : Full PCS now up and running : https://vimeo.com/523413869 Full open source release of V2 STM32F103 based controller uploaded. WARNING : Not yet tested!
+
