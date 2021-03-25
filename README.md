@@ -29,3 +29,4 @@ See here: https://www.mikrocontroller.net/attachment/28831/siemens_AP2921.pdf
 
 25/03/21 : Full PCS now up and running : https://vimeo.com/523413869 Full open source release of V2 STM32F103 based controller uploaded. WARNING : Not yet tested!
 
+Uploaded a redacted version of my very hacky test code used on prototype Arduino/SAM3X8E based controller.
