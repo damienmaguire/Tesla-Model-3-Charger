@@ -1,0 +1,3 @@
+[submodule "Software/stm32-M3-PCS/libopencm3"]
+	path = Software/stm32-M3-PCS/libopencm3
+	url = https://github.com/jsphuebner/libopencm3
