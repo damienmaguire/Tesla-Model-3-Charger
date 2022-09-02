@@ -32,3 +32,5 @@ See here: https://www.mikrocontroller.net/attachment/28831/siemens_AP2921.pdf
 Uploaded a redacted version of my very hacky test code used on prototype Arduino/SAM3X8E based controller.
 
 01/12/21 : Added fully functional V6 firmware for the Arduiono Due hardware. Tested and working in E46 touring with US PCS.
+
+02/09/22 : Beta release for new type STM32 firmware V1.
