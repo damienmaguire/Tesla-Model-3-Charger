@@ -58,7 +58,7 @@
     PARAM_ENTRY(CAT_CHARGER, udclim,      "V",       50,     420,    398,    7   ) \
     PARAM_ENTRY(CAT_CHARGER, timelim,     "minutes", -1,     10000,  -1,     8  ) \
     PARAM_ENTRY(CAT_CHARGER, timedly,     "minutes", -1,     10000,  -1,     9  ) \
-    PARAM_ENTRY(CAT_CHARGER, inputype,    INPUTS,    0,      5,      1,      10  ) \
+    PARAM_ENTRY(CAT_CHARGER, inputype,    INPUTS,    0,      3,      1,      10  ) \
     PARAM_ENTRY(CAT_CHARGER, cancontrol,  OFFON,     0,      1,      0,      11  ) \
     PARAM_ENTRY(CAT_CHARGER, idckp,       "",        0,      10000,  1,      12  ) \
     PARAM_ENTRY(CAT_CHARGER, idcki,       "",        0,      10000,  10,     13  ) \
