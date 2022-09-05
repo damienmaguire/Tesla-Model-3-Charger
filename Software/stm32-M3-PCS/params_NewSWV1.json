@@ -1,0 +1,18 @@
+{
+  "pacspnt": 0,
+  "idclim": 45,
+  "iaclim": 16,
+  "idcspnt": 45,
+  "udcspnt": 403,
+  "udclim": 398,
+  "timelim": -1,
+  "timedly": 0,
+  "inputype": 0,
+  "cancontrol": 0,
+  "idckp": 1,
+  "idcki": 10,
+  "activate": 3,
+  "udcdc": 14,
+  "Alerts": 0,
+  "AlertLog": 1
+}
