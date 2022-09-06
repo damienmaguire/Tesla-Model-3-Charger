@@ -290,6 +290,7 @@ static void Ms10Task(void)
     if(CAN_Enable)
     {
     //Send 10ms PCS CAN when enabled.
+    PCSCan::Msg13D();
     PCSCan::Msg22A();
     PCSCan::Msg3B2();
 

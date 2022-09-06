@@ -15,7 +15,7 @@ class PCSCan
 {
 
 public:
-
+    static		void Msg13D();
     static		void Msg20A();
     static		void Msg212();
     static		void Msg21D();

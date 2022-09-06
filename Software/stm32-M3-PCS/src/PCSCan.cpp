@@ -204,6 +204,22 @@ void PCSCan::handle76C(uint32_t data[2])  //PCS Debug output
 ///////PCS CAN Messages to Send
 ///////////////////////////////////////////////////////////////////////////////////////
 
+
+void PCSCan::Msg13D()
+{
+   ACILim=Param::GetInt(Param::iaclim)*2;
+   uint8_t bytes[6];
+  if(!DigIo::chena_out.Get()) bytes[0]=0x05;//Set charger enabled.
+  if(DigIo::chena_out.Get()) bytes[0]=0x0A;//Set charger disabled
+   bytes[1]=ACILim; //charge current limit. gain 0.5. 0x40 = 64 dec =32A. Populate AC lim in here.
+   bytes[2]=0XAA;
+   bytes[3]=0X1A;
+   bytes[4]=0xFF;
+   bytes[5]=0x02;
+   Can::GetInterface(0)->Send(0x13D, (uint32_t*)bytes,6);
+}
+
+
 void PCSCan::Msg20A()
 {  //HVP contactor state. Static msg.
    uint8_t bytes[6];
@@ -310,17 +326,6 @@ void PCSCan::Msg2B2()
 {
    //Charge Power Request
    PCS_Power_Req=Param::GetFloat(Param::pacspnt)*1000.0f;
-   if(PCS_HW==0 || PCS_HW==1)//IF US single phase PCS we must alter this msg.
-   {
-    uint8_t bytes[3];//US hvcon sends this as dlc=3. EU sends as dlc=5.So firmware rev change this msg.
-                    //A missmatch here will trigger a can rationality error.
-   bytes[0]=PCS_Power_Req & 0xFF;//KW scale 0.001 16 bit unsigned in bytes 0 and 1. e.g. 0x0578 = 1400 dec = 1400Watts=1.4kW.
-   bytes[1]=PCS_Power_Req >> 8;
-   bytes[2]=0x00;//byte 2 bit 1 may be an ac charge enable in older firmware. Bit 0 is PCS clear fault command in all revs.
-   Can::GetInterface(0)->Send(0x2B2, (uint32_t*)bytes,3);
-   }
-   else
-   {
     uint8_t bytes[5];//US hvcon sends this as dlc=3. EU sends as dlc=5.So firmware rev change this msg.
                     //A missmatch here will trigger a can rationality error.
    bytes[0]=PCS_Power_Req & 0xFF;//KW scale 0.001 16 bit unsigned in bytes 0 and 1. e.g. 0x0578 = 1400 dec = 1400Watts=1.4kW.
@@ -329,7 +334,7 @@ void PCSCan::Msg2B2()
    bytes[3]=0x00;
    bytes[4]=0x00;
    Can::GetInterface(0)->Send(0x2B2, (uint32_t*)bytes,5);
-   }
+
 
 }
 
