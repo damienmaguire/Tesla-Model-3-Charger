@@ -49,5 +49,6 @@ private:
 
     static uint8_t CalcPCSChecksum(uint8_t *data, uint16_t id);
     static int16_t ProcessTemps(uint16_t InVal);
+    static void ProcessCANRat(uint16_t AlertCANId,uint8_t AlertRxError);
 
 #endif /* PCSCan_h */

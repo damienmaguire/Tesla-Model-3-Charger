@@ -3,6 +3,7 @@
 
 bool mux3b2=true;
 bool mux545=true;
+bool Short2B2=false;
 uint16_t PCS_Power_Req=0;
 uint16_t DCDCSpnt=0;
 uint16_t DCDCAmps=0;
@@ -37,6 +38,8 @@ uint8_t PCSAlertPage=0;
 uint8_t PCSAlertId=0;
 uint8_t PCSAlertSource=0;
 uint8_t PCS_AlertCnt=0;
+uint16_t AlertCANId=0;
+uint8_t AlertRxError=0;
 static uint8_t pcs_alert_matrix[10]= {0,0,0,0,0,0,0,0,0,0};
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -162,6 +165,14 @@ void PCSCan::handle424(uint32_t data[2])  //PCS Alert Log
     if(PCS_AlertCnt>10)PCS_AlertCnt=0;
     Param::SetInt(Param::PCSAlertCnt, PCS_AlertCnt);
     }
+
+    if(PCSAlertId==0x1E)    //0x1E = Alert30= CAN rationality.
+    {
+    AlertCANId=((bytes[4]<<8 | bytes[3]));//Grab the CAN ID from the alert.
+    AlertRxError=(bytes[2]&0x07);//Grab the alert detail
+    ProcessCANRat(AlertCANId,AlertRxError);//call processing routine.
+    }
+
 }
 
 void PCSCan::handle504(uint32_t data[2])  //PCS Boot ID
@@ -205,7 +216,7 @@ void PCSCan::handle76C(uint32_t data[2])  //PCS Debug output
 ///////////////////////////////////////////////////////////////////////////////////////
 
 
-void PCSCan::Msg13D()
+void PCSCan::Msg13D()//Required by post 2020 firmwares. Mirrors some content in 0x23D.
 {
    ACILim=Param::GetInt(Param::iaclim)*2;
    uint8_t bytes[6];
@@ -326,15 +337,28 @@ void PCSCan::Msg2B2()
 {
    //Charge Power Request
    PCS_Power_Req=Param::GetFloat(Param::pacspnt)*1000.0f;
-    uint8_t bytes[5];//US hvcon sends this as dlc=3. EU sends as dlc=5.So firmware rev change this msg.
+   if(!Short2B2)
+   {
+    uint8_t bytes[5];//Older firmware sends this as dlc=3, newer sends as dlc=5.
                     //A missmatch here will trigger a can rationality error.
    bytes[0]=PCS_Power_Req & 0xFF;//KW scale 0.001 16 bit unsigned in bytes 0 and 1. e.g. 0x0578 = 1400 dec = 1400Watts=1.4kW.
    bytes[1]=PCS_Power_Req >> 8;
-   bytes[2]=0x00;//byte 2 bit 1 may be an ac charge enable in older firmware. Bit 0 is PCS clear fault command in all revs.
+   if(DigIo::chena_out.Get()) bytes[2]=0x00;//Set charger disabled.
+   if(!DigIo::chena_out.Get()) bytes[0]=0x02;//Set charger enabled.
    bytes[3]=0x00;
    bytes[4]=0x00;
    Can::GetInterface(0)->Send(0x2B2, (uint32_t*)bytes,5);
-
+   }
+   else
+   {
+    uint8_t bytes[3];//Older firmware sends this as dlc=3, newer sends as dlc=5.
+                    //A missmatch here will trigger a can rationality error.
+   bytes[0]=PCS_Power_Req & 0xFF;//KW scale 0.001 16 bit unsigned in bytes 0 and 1. e.g. 0x0578 = 1400 dec = 1400Watts=1.4kW.
+   bytes[1]=PCS_Power_Req >> 8;
+   if(DigIo::chena_out.Get()) bytes[2]=0x00;//Set charger disabled.
+   if(!DigIo::chena_out.Get()) bytes[0]=0x02;//Set charger enabled.
+   Can::GetInterface(0)->Send(0x2B2, (uint32_t*)bytes,3);
+   }
 
 }
 
@@ -480,3 +504,17 @@ static int16_t ProcessTemps(uint16_t InVal)
     return value;
 }
 
+static void ProcessCANRat(uint16_t AlertCANId,uint8_t AlertRxError)
+{
+        switch (AlertCANId)
+    {
+    case 0x2B2:
+    if(AlertRxError==0x2) Short2B2=true;//msg 0x2B2 is too short so change to long.
+    if(AlertRxError==0x1) Short2B2=false;//msg 0x2B2 is too long so change to short.
+    break;
+
+    default:
+
+    break;
+    }
+}
