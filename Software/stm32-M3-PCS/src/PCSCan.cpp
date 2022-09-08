@@ -4,6 +4,8 @@
 bool mux3b2=true;
 bool mux545=true;
 bool Short2B2=false;
+bool Backup2c4=true;
+bool GotDCI=false;
 uint16_t PCS_Power_Req=0;
 uint16_t DCDCSpnt=0;
 uint16_t DCDCAmps=0;
@@ -136,10 +138,35 @@ void PCSCan::handle2C4(uint32_t data[2])  //PCS Logging
     {
      HVVolts = (((bytes[3]<<8 | bytes[2])&0xFFF)*0.146484); //measured hv voltage. 12 bit unsigned int in bits 16-27. scale 0.146484.
      LVVolts = ((((bytes[1]<<9 | bytes[0])>>6))*0.0390625f); //measured lv voltage. 10 bit unsigned int in bits 5-14. scale 0.0390626.
+     Backup2c4=false;
+    }
+    else if ((mux2C4==0x04)&&(Backup2c4))//if we dont get HV volts then switch to backup.
+    {
+     HVVolts = ((((bytes[7]<<8 | bytes[6])>>3)&0xFFF)*0.146484); //measured hv voltage. 12 bit unsigned int in bits 51-62. scale 0.146484.
+     LVVolts = Param::GetFloat(Param::uaux);//In new firmware DCDC LV is not in 0x2C4.
     }
     Param::SetFloat(Param::udc, HVVolts);
     Param::SetFloat(Param::ulv, LVVolts);
 
+    mux2C4=(bytes[0]&0x1F);
+    if(mux2C4==0x00)                    //Calculate total DC output current from all 3 charger modules.
+    {
+      IOut_PhA=((bytes[4]))*0.1f;
+      GotDCI=true;
+    }
+    else if(mux2C4==0x01)
+    {
+      IOut_PhB=((bytes[4]))*0.1f;
+      GotDCI=true;
+    }
+    else if(mux2C4==0x02)
+    {
+      IOut_PhC=((bytes[4]))*0.1f;
+      GotDCI=true;
+    }
+
+    IOut_Total=IOut_PhA+IOut_PhB+IOut_PhC;
+    Param::SetFloat(Param::idc, IOut_Total);
 
 }
 
@@ -193,6 +220,8 @@ void PCSCan::handle76C(uint32_t data[2])  //PCS Debug output
                                         //Mux 0x20(32) = chg phase C outputs
                                         //IOout=bytes 2,3 14 bit unsigned scale 0.0025
     mux76C=(bytes[0]);
+    if(!GotDCI)
+    {
     if(mux76C==0x0C)                    //Calculate total DC output current from all 3 charger modules.
     {
       IOut_PhA=((bytes[2]<<8 | bytes[1])&0x3ff)*0.0025f;
@@ -208,7 +237,7 @@ void PCSCan::handle76C(uint32_t data[2])  //PCS Debug output
 
     IOut_Total=IOut_PhA+IOut_PhB+IOut_PhC;
     Param::SetFloat(Param::idc, IOut_Total);
-
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
