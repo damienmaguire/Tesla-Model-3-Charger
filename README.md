@@ -34,3 +34,5 @@ Uploaded a redacted version of my very hacky test code used on prototype Arduino
 01/12/21 : Added fully functional V6 firmware for the Arduiono Due hardware. Tested and working in E46 touring with US PCS.
 
 02/09/22 : Beta release for new type STM32 firmware V1.
+
+22/09/22 : New firmware in action : https://vimeo.com/745900410
