@@ -7,3 +7,4 @@ Software/stm32-M3-PCS/libopencm3
 *.map
 *.o
 *.layout
+Software/stm32-M3-PCS/M3PCS.layout
