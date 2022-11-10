@@ -200,7 +200,8 @@ static void PCSEnable()
 {
  bool enable = DigIo::enable_in.Get();
  Param::SetInt(Param::enable, enable);
-
+ bool Drv_en = DigIo::d2_in.Get();
+ Param::SetInt(Param::Drive_En, Drv_en);
 
 }
 

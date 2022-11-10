@@ -91,6 +91,7 @@
     VALUE_ENTRY(GridCFG,     GCFG,    2027 ) \
     VALUE_ENTRY(proximity,   OFFON,   2020 ) \
     VALUE_ENTRY(enable,      OFFON,   2021 ) \
+    VALUE_ENTRY(Drive_En,    OFFON,   2038 ) \
     VALUE_ENTRY(canenable,   OFFON,   2022 ) \
     VALUE_ENTRY(ChgATemp,    "C",    2031 ) \
     VALUE_ENTRY(ChgBTemp,    "C",    2032 ) \
