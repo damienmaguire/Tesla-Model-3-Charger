@@ -108,14 +108,14 @@
 
 
 /***** Enum String definitions *****/
-#define OPMODES      "0=Off, 1=Run"
+#define OPMODES      "0=Off, 1=Run, 2=Drive"
 #define CHARGERS     "1=Charger1, 2=Charger2, 4=Charger3"
 #define C_STAT        "0=Init, 1=Idle, 2=Startup, 3=WaitAC, 4=Qualify, 5=Config, 6=Enable, 7=Shutdown, 8=Faulted, 9=CLRFaults"
 #define OFFON        "0=Off, 1=On"
 #define CHFLAGS      "0=None, 1=Enabled, 2=Fault, 4=CheckAlive"
 #define TYPES        "0=48A_1P, 1=32A_1P, 2=16A_3P"
 #define GCFG         "0=None, 1=1P, 2=3P, 3=3PD"
-#define STATES       "0=Off, 1=WaitStart, 2=Enable, 3=Activate, 4=Run, 5=Stop"
+#define STATES       "0=Off, 1=WaitStart, 2=Enable, 3=Activate, 4=Run, 5=Stop, 6=DRIVE_START, 7=DRIVE"
 #define INPUTS       "0=Type2, 2=Type1, 3=Manual"
 #define POLARITIES   "0=ActiveHigh, 1=ActiveLow"
 #define CAT_TEST     "Testing"
@@ -151,6 +151,8 @@ enum states
    ENABLE,
    ACTIVATE,
    EVSEACTIVATE,
+   DRIVE_START,
+   DRIVE,
    STOP
 };
 

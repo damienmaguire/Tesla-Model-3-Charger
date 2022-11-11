@@ -212,7 +212,7 @@ static void ChargerStateMachine()
    uint8_t activate = Param::GetInt(Param::activate);
    uint8_t PCS_CHG_Status=Param::GetInt(Param::CHG_STAT);
 
-   if (!Param::GetBool(Param::enable))
+   if (!Param::GetBool(Param::enable) && !Param::GetBool(Param::Drive_En))
    {
       state = OFF;
    }
@@ -228,6 +228,7 @@ static void ChargerStateMachine()
             startTime = rtc_get_counter_val();
             state = WAITSTART;
          }
+        if(Param::GetBool(Param::Drive_En)) state = DRIVE_START;
          break;
       case WAITSTART:
          if (CheckDelay()) state = ENABLE;
@@ -238,6 +239,15 @@ static void ChargerStateMachine()
          DigIo::pcsena_out.Set();
          CAN_Enable=true;
          state = ACTIVATE;
+         break;
+      case DRIVE_START:
+         DigIo::pcsena_out.Set();
+         CAN_Enable=true;
+         state = DRIVE;
+         break;
+      case DRIVE:
+         Param::SetInt(Param::opmode, 2);
+         DigIo::dcdcena_out.Clear();
          break;
       case ACTIVATE:
          Param::SetInt(Param::opmode, 1);
