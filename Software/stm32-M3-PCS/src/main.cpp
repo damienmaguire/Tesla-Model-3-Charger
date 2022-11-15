@@ -248,6 +248,7 @@ static void ChargerStateMachine()
       case DRIVE:
          Param::SetInt(Param::opmode, 2);
          DigIo::dcdcena_out.Clear();
+         if (!Param::GetBool(Param::Drive_En)) state = OFF;
          break;
       case ACTIVATE:
          Param::SetInt(Param::opmode, 1);

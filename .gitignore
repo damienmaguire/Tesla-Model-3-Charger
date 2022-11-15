@@ -8,3 +8,4 @@ Software/stm32-M3-PCS/libopencm3
 *.o
 *.layout
 Software/stm32-M3-PCS/M3PCS.layout
+Software/stm32-M3-PCS/M3PCS.layout
