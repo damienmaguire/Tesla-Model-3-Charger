@@ -41,6 +41,10 @@ static Stm32Scheduler* scheduler;
 static Can* can;
 static uint32_t startTime;
 static bool CAN_Enable=false;
+static uint8_t PreChTmr=30;//precharge delay of 3 seconds before light off dcdc during charge mode.
+static uint16_t ChgPower=0;
+static uint8_t pwrDntmr=10;
+static bool ZeroPower=false;
 
 static void EvseRead()
 {
@@ -212,10 +216,10 @@ static void ChargerStateMachine()
    uint8_t activate = Param::GetInt(Param::activate);
    uint8_t PCS_CHG_Status=Param::GetInt(Param::CHG_STAT);
 
-   if (!Param::GetBool(Param::enable) && !Param::GetBool(Param::Drive_En))
-   {
-      state = OFF;
-   }
+  // if (!Param::GetBool(Param::enable) && !Param::GetBool(Param::Drive_En))
+  // {
+   //   state = OFF;
+  // }
 
    switch (state)
    {
@@ -223,12 +227,15 @@ static void ChargerStateMachine()
       case OFF:
          Param::SetInt(Param::opmode, 0);
          DisableAll();
+         PreChTmr=Param::GetInt(Param::PreChT)*10;//reset precharge tmer
+         pwrDntmr=10;//reset powerdown timer
+         ZeroPower=true;//charger power =0 in off.
          if (CheckStartCondition())
          {
             startTime = rtc_get_counter_val();
             state = WAITSTART;
          }
-        if(Param::GetBool(Param::Drive_En)) state = DRIVE_START;
+        if(Param::GetBool(Param::Drive_En)) state = DRIVE;
          break;
       case WAITSTART:
          if (CheckDelay()) state = ENABLE;
@@ -236,18 +243,21 @@ static void ChargerStateMachine()
          break;
       case ENABLE:
          DigIo::hvena_out.Set();
+         PreChTmr--;//decrement precharge timer
+         if(PreChTmr==0)
+         {
          DigIo::pcsena_out.Set();
          CAN_Enable=true;
          state = ACTIVATE;
-         break;
-      case DRIVE_START:
-         DigIo::pcsena_out.Set();
-         CAN_Enable=true;
-         state = DRIVE;
+         }
          break;
       case DRIVE:
+         ZeroPower=true;//charger powe =0 in drive.
+         DigIo::pcsena_out.Set();
+         DigIo::chena_out.Set();//charger off
          Param::SetInt(Param::opmode, 2);
          DigIo::dcdcena_out.Clear();
+         CAN_Enable=true;
          if (!Param::GetBool(Param::Drive_En)) state = OFF;
          break;
       case ACTIVATE:
@@ -268,33 +278,60 @@ static void ChargerStateMachine()
           {
          DigIo::evseact_out.Set();
          DigIo::acpres_out.Set();
+         ZeroPower=false;//release zero charger power clamp
           }
          if (CheckVoltage() || CheckTimeout())
-            state = STOP;
+         {
+             ZeroPower=true;
+             state = STOP;
+         }
+
          if (CheckUnplugged())
          {
+            ZeroPower=true;
             DigIo::acpres_out.Clear();
             DigIo::evseact_out.Clear();
-            state = OFF;
+            state = STOP;
          }
          if (CheckChargerFaults())
          {
+            ZeroPower=true;
             DigIo::acpres_out.Clear();
-            state = OFF;
+            state = STOP;
          }
+         if (!Param::GetBool(Param::enable)) state = STOP;
          break;
       case STOP:
+         ZeroPower=true;
+         if(pwrDntmr!=0) pwrDntmr--;
+         if(pwrDntmr==0)
+         {
          DisableAll();
          Param::SetInt(Param::opmode, 0);
+         if (CheckUnplugged()) state = OFF;
+         }
 
-         if (CheckUnplugged())
-            state = OFF;
          break;
    }
 
    Param::SetInt(Param::state, state);
 }
 
+
+uint16_t ChgPwrRamp()
+{
+uint8_t Charger_state=Param::GetInt(Param::CHG_STAT);
+uint16_t Charger_Pwr_Max=Param::GetInt(Param::pacspnt)*1000;
+if(Charger_state!=6) ChgPower=0; //Set power =0 unless charger is enabled.
+if(ZeroPower) ChgPower=0;
+else
+{
+if(ChgPower<Charger_Pwr_Max)ChgPower+=10;
+if(ChgPower>Charger_Pwr_Max)ChgPower-=10;
+}
+
+return ChgPower;
+}
 
 
 static void Ms10Task(void)
@@ -351,13 +388,15 @@ static void Ms100Task(void)
    PCSCan::Msg232();
    PCSCan::Msg23D();
    PCSCan::Msg25D();
-   PCSCan::Msg2B2();
+   PCSCan::Msg2B2(ChgPwrRamp());
    PCSCan::Msg321();
    PCSCan::Msg333();
    PCSCan::Msg3A1();
     }
 
 }
+
+
 
 
 

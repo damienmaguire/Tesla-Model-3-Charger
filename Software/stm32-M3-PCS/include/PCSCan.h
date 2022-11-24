@@ -23,7 +23,7 @@ public:
     static		void Msg232();
     static		void Msg23D();
     static		void Msg25D();
-    static		void Msg2B2();
+    static		void Msg2B2(uint16_t Charger_Power);
     static		void Msg321();
     static		void Msg333();
     static		void Msg3A1();

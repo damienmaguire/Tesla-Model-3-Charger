@@ -39,14 +39,14 @@
  */
 
 //Define a version string of your firmware here
-#define VER 1.16.R
+#define VER 1.01.R
 
 /* Entries must be ordered as follows:
    1. Saveable parameters (id != 0)
    2. Temporary parameters (id = 0)
    3. Display values
  */
-//Next param id (increase when adding new parameter!): 23
+//Next param id (increase when adding new parameter!): 24
 //Next value Id: 2051
 /*              category     name         unit       min     max     default id */
 #define PARAM_LIST \
@@ -64,6 +64,7 @@
     PARAM_ENTRY(CAT_CHARGER, idcki,       "",        0,      10000,  10,     13  ) \
     PARAM_ENTRY(CAT_CHARGER, activate,    DEVS,      0,      3,      3,      14  ) \
     PARAM_ENTRY(CAT_DCDC,    udcdc,       "V",       12,     15,     14,     15  ) \
+    PARAM_ENTRY(CAT_DCDC,    PreChT,      "sec",     1,      10,     3,      23  ) \
     PARAM_ENTRY(CAT_GEN,     Alerts,      "",        0,      9,      0,      16  ) \
     PARAM_ENTRY(CAT_GEN,     AlertLog,    OFFON,     0,      1,      1,      17  ) \
     VALUE_ENTRY(opmode,      OPMODES, 2000 ) \
@@ -110,12 +111,12 @@
 /***** Enum String definitions *****/
 #define OPMODES      "0=Off, 1=Run, 2=Drive"
 #define CHARGERS     "1=Charger1, 2=Charger2, 4=Charger3"
-#define C_STAT        "0=Init, 1=Idle, 2=Startup, 3=WaitAC, 4=Qualify, 5=Config, 6=Enable, 7=Shutdown, 8=Faulted, 9=CLRFaults"
+#define C_STAT       "0=Init, 1=Idle, 2=Startup, 3=WaitAC, 4=Qualify, 5=Config, 6=Enable, 7=Shutdown, 8=Faulted, 9=CLRFaults"
 #define OFFON        "0=Off, 1=On"
 #define CHFLAGS      "0=None, 1=Enabled, 2=Fault, 4=CheckAlive"
 #define TYPES        "0=48A_1P, 1=32A_1P, 2=16A_3P"
 #define GCFG         "0=None, 1=1P, 2=3P, 3=3PD"
-#define STATES       "0=Off, 1=WaitStart, 2=Enable, 3=Activate, 4=Run, 5=Stop, 6=DRIVE_START, 7=DRIVE"
+#define STATES       "0=Off, 1=WaitStart, 2=Enable, 3=Activate, 4=Run, 5=Stop, 6=DRIVE"
 #define INPUTS       "0=Type2, 2=Type1, 3=Manual"
 #define POLARITIES   "0=ActiveHigh, 1=ActiveLow"
 #define CAT_TEST     "Testing"

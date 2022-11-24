@@ -13,7 +13,7 @@ uint16_t ACLim=0;
 float ACPwr=0;
 uint16_t ACVolts=0;
 uint16_t ACAmps=0;
-uint16_t HVVolts=0;
+uint16_t HVVolts=375;
 float LVVolts=0;
 float DCDCPwr=0;
 int16_t TempLocal=0;
@@ -309,12 +309,11 @@ void PCSCan::Msg22A()
    uint8_t bytes[4];
    bytes[0]=0x00;//precharge request voltage. 16 bit signed int. scale 0.1. Bytes 0 and 1.
    bytes[1]=0x00;
-                                                                            //BUG HERE
-   if(activate==0)bytes[2]=0x70;//Shutdown both chg and dcdc
-   if(activate==1)bytes[2]=0x75;//Charger en
-   if(activate==2)bytes[2]=0x79;//DCDC en
-   if(activate==3)bytes[2]=0x7D;//Charger en and DCDC en
-   bytes[3]=0x17;
+   if(activate==0)bytes[2]=(HVVolts&0xF)<<4 | 0x0;//Shutdown both chg and dcdc
+   if(activate==1)bytes[2]=(HVVolts&0xF)<<4 | 0x5;//Charger en
+   if(activate==2)bytes[2]=(HVVolts&0xF)<<4 | 0x9;//DCDC en
+   if(activate==3)bytes[2]=(HVVolts&0xF)<<4 | 0xD;//Charger en and DCDC en
+   bytes[3]=(HVVolts>>4)&0xFF;//0x17;//Measured hv voltage. 0x177 = 375v.
    Can::GetInterface(0)->Send(0x22A, (uint32_t*)bytes,4);
 }
 
@@ -362,10 +361,10 @@ void PCSCan::Msg25D()
    Can::GetInterface(0)->Send(0x25D, (uint32_t*)bytes,8);
 }
 
-void PCSCan::Msg2B2()
+void PCSCan::Msg2B2(uint16_t Charger_Power)
 {
    //Charge Power Request
-   PCS_Power_Req=Param::GetFloat(Param::pacspnt)*1000.0f;
+   PCS_Power_Req=Charger_Power;//Param::GetFloat(Param::pacspnt)*1000.0f;
    if(!Short2B2)
    {
     uint8_t bytes[5];//Older firmware sends this as dlc=3, newer sends as dlc=5.
