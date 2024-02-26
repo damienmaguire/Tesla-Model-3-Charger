@@ -372,7 +372,7 @@ void PCSCan::Msg2B2(uint16_t Charger_Power)
    bytes[0]=PCS_Power_Req & 0xFF;//KW scale 0.001 16 bit unsigned in bytes 0 and 1. e.g. 0x0578 = 1400 dec = 1400Watts=1.4kW.
    bytes[1]=PCS_Power_Req >> 8;
    if(DigIo::chena_out.Get()) bytes[2]=0x00;//Set charger disabled.
-   if(!DigIo::chena_out.Get()) bytes[0]=0x02;//Set charger enabled.
+   if(!DigIo::chena_out.Get()) bytes[2]=0x02;//Set charger enabled.
    bytes[3]=0x00;
    bytes[4]=0x00;
    Can::GetInterface(0)->Send(0x2B2, (uint32_t*)bytes,5);
@@ -384,7 +384,7 @@ void PCSCan::Msg2B2(uint16_t Charger_Power)
    bytes[0]=PCS_Power_Req & 0xFF;//KW scale 0.001 16 bit unsigned in bytes 0 and 1. e.g. 0x0578 = 1400 dec = 1400Watts=1.4kW.
    bytes[1]=PCS_Power_Req >> 8;
    if(DigIo::chena_out.Get()) bytes[2]=0x00;//Set charger disabled.
-   if(!DigIo::chena_out.Get()) bytes[0]=0x02;//Set charger enabled.
+   if(!DigIo::chena_out.Get()) bytes[2]=0x02;//Set charger enabled.
    Can::GetInterface(0)->Send(0x2B2, (uint32_t*)bytes,3);
    }
 
