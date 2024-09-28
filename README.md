@@ -36,3 +36,5 @@ Uploaded a redacted version of my very hacky test code used on prototype Arduino
 02/09/22 : Beta release for new type STM32 firmware V1.
 
 22/09/22 : New firmware in action : https://vimeo.com/745900410
+
+28/09/24 : Update on the PCS project : https://vimeo.com/1013243625
